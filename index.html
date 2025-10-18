@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PeerSkill — Skill Validation Platform (Preview)</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">PS</div>
+        <div>
+          <div class="title">PeerSkill</div>
+          <div class="tag">Peer-to-peer skill validation</div>
+        </div>
+      </div>
+      <nav>
+        <button class="ghost" onclick="showHowHub()">How it works</button>
+        <button class="ghost" onclick="scrollToSection('projects')">Projects</button>
+        <button class="btn" onclick="startDemo()">Create micro-project</button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Home page -->
+      <section id="home" class="page active">
+        <section class="hero">
+          <div class="hero-card">
+            <h1>Prove real skills — beyond certificates</h1>
+            <p>Share micro-projects or video demos. Get peer reviews and earn verified badges.</p>
+            <div class="flow">
+              <div class="pill">1. Submit demo</div>
+              <div class="pill">2. Peer review</div>
+              <div class="pill">3. Verified badge</div>
+            </div>
+            <div class="hero-actions">
+              <button class="btn" onclick="startDemo()">Start demo</button>
+              <button class="ghost" onclick="scrollToSection('how')">Learn more</button>
+            </div>
+          </div>
+
+          <aside class="preview-card">
+            <div class="preview-header">
+              <div>
+                <div class="muted small">Current task</div>
+                <div class="fw-700">Micro-project: Build a landing page</div>
+              </div>
+              <div class="badge">In review</div>
+            </div>
+          </aside>
+        </section>
+
+        <section id="projects" class="hero-card mt-26">
+          <h2 class="mb-8">Featured micro-projects</h2>
+          <div class="grid">
+            <article class="project">
+              <h3>Responsive landing page — HTML/CSS</h3>
+              <div class="meta">by Aarav • Verified</div>
+            </article>
+            <article class="project">
+              <h3>2-min product pitch video</h3>
+              <div class="meta">by Neha • Needs 2 more reviews</div>
+            </article>
+            <article class="project">
+              <h3>Data cleaning script — Python</h3>
+              <div class="meta">by Sanjay • Verified</div>
+            </article>
+          </div>
+          <div class="mt-16 text-right">
+            <button class="btn" onclick="showAlert('Load more projects coming soon!')">Load more</button>
+          </div>
+        </section>
+
+        <section id="how" class="hero-card mt-22">
+          <div class="card">
+            <h2>How validation works</h2>
+            <p class="muted small">The basic flow is simple: sign up → upload a micro-project (or demo) → request peer reviews. Once peers validate your submission and the community reaches consensus, you'll earn XP and badges that reflect your verified skills.</p>
+
+            <h3 class="mt-12">Steps</h3>
+            <ol class="muted small">
+              <li><b>Sign up:</b> Create an account and pick your domain(s).</li>
+              <li><b>Upload:</b> Submit a micro-project, repo link, or short demo video.</li>
+              <li><b>Review:</b> Validators score using rubrics; consensus awards verification.</li>
+            </ol>
+
+            <h3 class="mt-12">XP & Badges (example)</h3>
+            <p class="muted small">Example thresholds: Bronze 50 XP • Silver 150 XP • Gold 300 XP. XP is earned when validators approve or give positive scores; badges unlock at thresholds.</p>
+
+            <div class="how-details hidden">
+              <div class="mt-12">
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                  <button class="btn" onclick="simulateSignUp()">Simulate sign up</button>
+                  <button class="btn" onclick="simulateUpload()">Simulate upload</button>
+                  <button class="btn" onclick="simulateApprove()">Simulate approval</button>
+                  <button class="ghost" onclick="resetHowSim()">Reset simulation</button>
+                </div>
+              </div>
+
+              <div class="mt-12">
+                <div class="preview-card">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                      <div class="small muted">Simulation XP</div>
+                      <div id="howXp" class="fw-700" style="font-size:20px">0 XP</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div class="small muted">Badges</div>
+                      <div id="howBadges" style="margin-top:6px">—</div>
+                    </div>
+                  </div>
+                  <div id="howLog" class="mt-12 muted small">No activity yet. Click "How it works" to reveal interactive options.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-12">
+              <button class="btn" onclick="prepareValidatorFromAccount()">Become a Validator</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Demo creation page (in-app) -->
+      <section id="demo" class="page">
+        <div class="card">
+          <button class="ghost" onclick="navigateTo('home')">← Back</button>
+          <h1 style="margin-top:12px">Create a Demo</h1>
+          <p class="muted">Fill a short demo to showcase your micro-project. This is a local demo-only flow.</p>
+
+          <form id="demoForm" onsubmit="submitDemoForm(event)">
+            <div class="form-row mb-12">
+              <input class="input" id="demoTitle" placeholder="Demo title (e.g. Landing page)" required />
+            </div>
+            <div class="form-row mb-12">
+              <input class="input" id="demoAuthor" placeholder="Your name" required />
+            </div>
+            <div class="mb-12">
+              <label class="muted small">Short description</label>
+              <textarea id="demoDesc" placeholder="A 1-2 sentence description"></textarea>
+            </div>
+
+            <div class="actions-row">
+              <button class="btn" type="submit">Publish demo</button>
+              <button type="button" class="ghost" onclick="saveDemoDraft()">Save draft</button>
+            </div>
+
+            <div id="demoMsg" class="form-msg"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Validator page (in-app, no separate file) -->
+      <section id="validator" class="page">
+        <div class="card">
+          <button class="ghost" onclick="navigateTo('home')">← Back</button>
+          <h1 class="accent-title">Become a Validator</h1>
+          <p class="muted">Validators review submissions, score using rubrics, and help build trust. Fill the short
+            application to apply.</p>
+
+          <h3>Requirements</h3>
+          <ul class="muted small">
+            <li>At least 3 verified skills on PeerSkill.</li>
+            <li>Completed validator training quiz (automated).</li>
+            <li>Agree to the community code of ethics.</li>
+          </ul>
+
+          <h3>Benefits</h3>
+          <ul class="muted small">
+            <li>Earn reputation and validation credits.</li>
+            <li>Access to moderation dashboards.</li>
+            <li>Special recognition badges.</li>
+          </ul>
+
+          <h3 class="mt-14">Application</h3>
+          <form id="validatorForm" onsubmit="submitValidatorForm(event)">
+            <div class="form-row mb-12">
+              <input class="input" id="name" placeholder="Your full name" required />
+            </div>
+            <div class="form-row mb-12">
+              <input class="input" id="email" type="email" placeholder="Email" required />
+            </div>
+            <div class="form-row mb-12">
+              <input class="input" id="profileLink" placeholder="Profile or portfolio link" />
+            </div>
+            <div class="mb-12">
+              <label class="muted small">Select validator areas</label>
+              <select id="areas" multiple class="fullwidth-select">
+                <option>Front-end</option>
+                <option>Video & Media</option>
+                <option>Data & Analytics</option>
+                <option>DevOps</option>
+                <option>Design & UX</option>
+              </select>
+            </div>
+            <div class="mb-12">
+              <label class="muted small">Briefly describe why you should be a validator</label>
+              <textarea id="why" placeholder="Your experience and approach to fair reviews"></textarea>
+            </div>
+
+            <div class="actions-row">
+              <button class="btn" type="submit">Submit application</button>
+              <button type="button" class="ghost" onclick="saveDraft()">Save draft</button>
+            </div>
+
+            <div id="formMsg" class="form-msg"></div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <div class="muted small">© PeerSkill 2025</div>
+      <div class="footer-actions">
+        <button class="ghost" onclick="showAlert('Privacy policy coming soon!')">Privacy</button>
+        <button class="ghost" onclick="showAlert('Terms coming soon!')">Terms</button>
+        <button class="btn" onclick="startSignUp()">Sign up</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- load client-side behaviour -->
+  <script src="./script.js"></script>
+
+  <!-- move signup & domain pages inside container so footer remains at bottom -->
+  <!-- Sign-up page (in-app) -->
+  <section id="signup" class="page">
+    <div class="card">
+      <button class="ghost" onclick="navigateTo('home')">← Back</button>
+      <h1 style="margin-top:12px">Sign up</h1>
+      <p class="muted">Create an account and choose the domain(s) you want to validate or contribute to.</p>
+
+      <form id="signupForm" onsubmit="submitSignUpForm(event)">
+        <div class="form-row mb-12"><input class="input" id="suName" placeholder="Full name" required /></div>
+        <div class="form-row mb-12"><input class="input" id="suEmail" type="email" placeholder="Email" required /></div>
+        <div class="form-row mb-12"><input class="input" id="suAge" type="number" min="13" placeholder="Age (optional)" /></div>
+        <div class="form-row mb-12"><input class="input" id="suMobile" placeholder="Mobile number (optional)" /></div>
+        <div class="form-row mb-12"><input class="input" id="suResume" placeholder="Resume / CV link (optional)" /></div>
+        <div class="form-row mb-12"><input class="input" id="suMiniProject" placeholder="Mini-project link (repo/demo)" /></div>
+        <div class="mb-12">
+          <label class="muted small">Select domain(s) you want to apply for</label>
+          <select id="suDomains" multiple class="fullwidth-select">
+            <option>Front-end</option>
+            <option>Back-end</option>
+            <option>Full-stack</option>
+            <option>Mobile</option>
+            <option>Video & Media</option>
+            <option>Data & Analytics</option>
+            <option>DevOps</option>
+            <option>Design & UX</option>
+            <option>QA & Testing</option>
+            <option>Security</option>
+          </select>
+        </div>
+        <div class="actions-row">
+          <button class="btn" type="submit">Create account</button>
+          <button type="button" class="ghost" onclick="saveSignUpDraft()">Save draft</button>
+        </div>
+        <div id="signupMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Front-end domain application page -->
+  <section id="apply-frontend" class="page">
+    <div class="card">
+      <button class="ghost" onclick="navigateTo('home')">← Back</button>
+      <h1 style="margin-top:12px">Front-end Application</h1>
+      <p class="muted">Provide details to apply as a Front-end validator/contributor.</p>
+
+      <form id="frontendForm" onsubmit="submitFrontendApplication(event)">
+        <div class="form-row mb-12"><input class="input" id="feName" placeholder="Full name" required /></div>
+        <div class="form-row mb-12"><input class="input" id="feEmail" type="email" placeholder="Email" required /></div>
+        <div class="form-row mb-12"><input class="input" id="fePortfolio" placeholder="Portfolio URL (required)" required /></div>
+        <div class="form-row mb-12"><input class="input" id="feFrameworks" placeholder="Primary frameworks (comma-separated)" /></div>
+        <div class="form-row mb-12"><input class="input" id="feGithub" placeholder="GitHub link (optional)" /></div>
+        <div class="form-row mb-12"><input class="input" id="feYears" type="number" min="0" placeholder="Years experience" /></div>
+
+        <div class="actions-row">
+          <button class="btn" type="submit">Submit application</button>
+          <button type="button" class="ghost" onclick="saveFrontendDraft()">Save draft</button>
+        </div>
+        <div id="frontendMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Video & Media domain application page -->
+  <section id="apply-video" class="page">
+    <div class="card">
+      <button class="ghost" onclick="navigateTo('home')">← Back</button>
+      <h1 style="margin-top:12px">Video & Media Application</h1>
+      <p class="muted">Provide demo video and tools experience.</p>
+
+      <form id="videoForm" onsubmit="submitVideoApplication(event)">
+        <div class="form-row mb-12"><input class="input" id="vidName" placeholder="Full name" required /></div>
+        <div class="form-row mb-12"><input class="input" id="vidEmail" type="email" placeholder="Email" required /></div>
+        <div class="form-row mb-12"><input class="input" id="vidVideoUrl" placeholder="Demo video URL (required)" required /></div>
+        <div class="form-row mb-12"><input class="input" id="vidTools" placeholder="Tools used (e.g., Premiere, After Effects)" /></div>
+        <div class="form-row mb-12"><input class="input" id="vidDuration" type="number" min="0" placeholder="Duration (minutes)" /></div>
+
+        <div class="actions-row">
+          <button class="btn" type="submit">Submit application</button>
+          <button type="button" class="ghost" onclick="saveVideoDraft()">Save draft</button>
+        </div>
+        <div id="vidMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Data & Analytics domain application page -->
+  <section id="apply-data" class="page">
+    <div class="card">
+      <button class="ghost" onclick="navigateTo('home')">← Back</button>
+      <h1 style="margin-top:12px">Data & Analytics Application</h1>
+      <p class="muted">Provide sample work and experience.</p>
+
+      <form id="dataForm" onsubmit="submitDataApplication(event)">
+        <div class="form-row mb-12"><input class="input" id="daName" placeholder="Full name" required /></div>
+        <div class="form-row mb-12"><input class="input" id="daEmail" type="email" placeholder="Email" required /></div>
+        <div class="form-row mb-12"><input class="input" id="daNotebook" placeholder="Sample notebook link (required)" required /></div>
+        <div class="form-row mb-12"><input class="input" id="daLangs" placeholder="Primary languages (e.g., Python,R)" /></div>
+        <div class="form-row mb-12"><input class="input" id="daYears" type="number" min="0" placeholder="Years experience" /></div>
+
+        <div class="actions-row">
+          <button class="btn" type="submit">Submit application</button>
+          <button type="button" class="ghost" onclick="saveDataDraft()">Save draft</button>
+        </div>
+        <div id="daMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- DevOps domain application page -->
+  <section id="apply-devops" class="page">
+    <div class="card">
+      <button class="ghost" onclick="navigateTo('home')">← Back</button>
+      <h1 style="margin-top:12px">DevOps Application</h1>
+      <p class="muted">Share cloud experience and CI/CD knowledge.</p>
+
+      <form id="devopsForm" onsubmit="submitDevopsApplication(event)">
+        <div class="form-row mb-12"><input class="input" id="dvName" placeholder="Full name" required /></div>
+        <div class="form-row mb-12"><input class="input" id="dvEmail" type="email" placeholder="Email" required /></div>
+        <div class="form-row mb-12">
+          <select id="dvCloud" class="fullwidth-select">
+            <option>AWS</option>
+            <option>GCP</option>
+            <option>Azure</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-row mb-12"><input class="input" id="dvCICD" placeholder="CI/CD tools (e.g., Jenkins, GitHub Actions)" /></div>
+        <div class="form-row mb-12"><input class="input" id="dvYears" type="number" min="0" placeholder="Years experience" /></div>
+
+        <div class="actions-row">
+          <button class="btn" type="submit">Submit application</button>
+          <button type="button" class="ghost" onclick="saveDevopsDraft()">Save draft</button>
+        </div>
+        <div id="dvMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Design & UX domain application page -->
+  <section id="apply-design" class="page">
+    <div class="card">
+      <button class="ghost" onclick="navigateTo('home')">← Back</button>
+      <h1 style="margin-top:12px">Design & UX Application</h1>
+      <p class="muted">Share portfolio and tools experience.</p>
+
+      <form id="designForm" onsubmit="submitDesignApplication(event)">
+        <div class="form-row mb-12"><input class="input" id="uxName" placeholder="Full name" required /></div>
+        <div class="form-row mb-12"><input class="input" id="uxEmail" type="email" placeholder="Email" required /></div>
+        <div class="form-row mb-12"><input class="input" id="uxPortfolio" placeholder="Portfolio link (required)" required /></div>
+        <div class="form-row mb-12"><input class="input" id="uxTools" placeholder="Tools (e.g., Figma, Sketch)" /></div>
+        <div class="form-row mb-12"><input class="input" id="uxSamples" placeholder="Design samples link" /></div>
+
+        <div class="actions-row">
+          <button class="btn" type="submit">Submit application</button>
+          <button type="button" class="ghost" onclick="saveDesignDraft()">Save draft</button>
+        </div>
+        <div id="uxMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+</body>
+
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PeerSkill — Skill Validation Platform (Preview)</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">PS</div>
+        <div>
+          <div class="title">PeerSkill</div>
+          <div class="tag">Peer-to-peer skill validation</div>
+        </div>
+      </div>
+      <nav>
+        <button class="ghost" onclick="showHowHub()">How it works</button>
+        <button class="ghost" onclick="scrollToSection('projects')">Projects</button>
+        <button class="ghost" onclick="navigateTo('mcq')">MCQs</button>
+        <button class="btn" onclick="startDemo()">Create micro-project</button>
+      </nav>
+    </header>
+
+    <main>
+
+      <!-- MCQ PAGE -->
+      <section id="mcq" class="page">
+        <div class="card">
+          <button class="ghost" onclick="navigateTo('home')">← Back</button>
+          <h1 style="margin-top:12px">Domain MCQs</h1>
+          <p class="muted">Select a domain below to test your knowledge.</p>
+
+          <div class="actions-row" style="flex-wrap:wrap;gap:10px;margin-top:14px;">
+            <button class="btn" onclick="loadMCQs('Front-end')">Front-end</button>
+            <button class="btn" onclick="loadMCQs('Back-end')">Back-end</button>
+            <button class="btn" onclick="loadMCQs('Full-stack')">Full-stack</button>
+            <button class="btn" onclick="loadMCQs('Mobile')">Mobile</button>
+            <button class="btn" onclick="loadMCQs('Video & Media')">Video & Media</button>
+            <button class="btn" onclick="loadMCQs('Data & Analytics')">Data & Analytics</button>
+            <button class="btn" onclick="loadMCQs('DevOps')">DevOps</button>
+            <button class="btn" onclick="loadMCQs('Design & UX')">Design & UX</button>
+            <button class="btn" onclick="loadMCQs('QA & Testing')">QA & Testing</button>
+            <button class="btn" onclick="loadMCQs('Security')">Security</button>
+          </div>
+
+          <div id="mcqContainer" style="margin-top:20px;"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="muted small">© PeerSkill 2025</div>
+      <div class="footer-actions">
+        <button class="ghost" onclick="showAlert('Privacy policy coming soon!')">Privacy</button>
+        <button class="ghost" onclick="showAlert('Terms coming soon!')">Terms</button>
+        <button class="btn" onclick="startSignUp()">Sign up</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
